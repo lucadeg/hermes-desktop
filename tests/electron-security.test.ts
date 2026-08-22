@@ -115,6 +115,20 @@ describe("Electron app navigation policy", () => {
     ).toBe(false);
   });
 
+  it("allows the local AppShell v2 origin while rejecting remote lookalikes", () => {
+    const ideUrl = "http://127.0.0.1:5173";
+    expect(
+      isAllowedAppNavigationUrl(`${ideUrl}/workspace#explorer`, rendererHtmlPath, ideUrl),
+    ).toBe(true);
+    expect(
+      isAllowedAppNavigationUrl(
+        "https://127.0.0.1.example.com:5173",
+        rendererHtmlPath,
+        ideUrl,
+      ),
+    ).toBe(false);
+  });
+
   it("blocks navigation to other local or remote documents", () => {
     expect(
       isAllowedAppNavigationUrl(
