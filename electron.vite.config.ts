@@ -22,6 +22,10 @@ export default defineConfig({
     },
   },
   renderer: {
+    server: {
+      port: Number(process.env.HERMES_DESKTOP_RENDERER_PORT || 5174),
+      strictPort: true,
+    },
     resolve: {
       alias: {
         "@renderer": resolve("src/renderer/src"),

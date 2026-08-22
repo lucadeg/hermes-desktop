@@ -316,6 +316,14 @@ function openExternalUrl(rawUrl: unknown): void {
 
 function createWindow(): void {
   const rendererHtmlPath = join(__dirname, "../renderer/index.html");
+  const configuredIdeUrl = process.env["HERMES_IDE_URL"];
+  const ideUrl =
+    configuredIdeUrl && isAllowedWebviewUrl(configuredIdeUrl)
+      ? configuredIdeUrl
+      : undefined;
+  if (configuredIdeUrl && !ideUrl) {
+    console.warn("[SECURITY] Ignoring non-local HERMES_IDE_URL");
+  }
 
   mainWindow = new BrowserWindow({
     width: 1100,
@@ -383,7 +391,7 @@ function createWindow(): void {
       isAllowedAppNavigationUrl(
         url,
         rendererHtmlPath,
-        is.dev ? process.env["ELECTRON_RENDERER_URL"] : undefined,
+        ideUrl || (is.dev ? process.env["ELECTRON_RENDERER_URL"] : undefined),
       )
     ) {
       return;
@@ -453,7 +461,9 @@ function createWindow(): void {
     Menu.buildFromTemplate(template).popup();
   });
 
-  if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+  if (ideUrl) {
+    mainWindow.loadURL(ideUrl);
+  } else if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
     mainWindow.loadFile(rendererHtmlPath);
