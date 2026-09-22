@@ -1,9 +1,7 @@
+
 name: Release
 
 on:
-  push:
-    branches:
-      - release
   workflow_dispatch:
     inputs:
       dry_run:
@@ -11,6 +9,7 @@ on:
         type: boolean
         default: true
 
+  # Automatic triggers removed; invoke through FounderOS/Admin Gate.
 permissions:
   contents: write
 
